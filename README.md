@@ -1,7 +1,5 @@
-# AutoHook
-A low quality plugin to use Hooks automatically when fishing. Expect bugs, im bad at coding.
+# Minion Roulette
+A simple plugin that swaps your minions every time you change zones.
 
-https://raw.githubusercontent.com/InitialDet/DalamudPlugins/master/pluginmaster.json
+https://raw.githubusercontent.com/InitialDet/DalamudPlugins/main/pluginmaster.json
 
-Inspired by the Fish-Notify Plugin: 
-https://github.com/carvelli/Fish-Notify
