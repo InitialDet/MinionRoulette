@@ -1,0 +1,18 @@
+{
+  "Author": "Det",
+  "Name": "Minion Roulette",
+  "Punchline": "Swaps your minions everytime you change zones",
+  "Description": "Make sure to enable the checkbox in the Minion Guide if you want only your favorite minions to be swapped",
+  "RepoUrl": "https://github.com/InitialDet/MinionRoulette",
+  "CategoryTags": [
+    "Casual",
+    "Minion"
+  ],
+  "InternalName": "MinionRoulette",
+  "AssemblyVersion": "",
+  "ApplicableVersion": "any",
+  "DalamudApiLevel": 6,
+  "LoadPriority": 0,
+  "Changelog": "Add a better Zone Change detection and some code cleanup"
+}
+

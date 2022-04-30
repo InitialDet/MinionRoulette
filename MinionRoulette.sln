@@ -3,15 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinionRoulette", "MinionRoulette.csproj", "{3F91A6A9-5F97-4F6D-864C-DA066F94121A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinionRoulette", "MinionRoulette\MinionRoulette.csproj", "{73EF7915-633C-4DE3-B6F0-6A0F0FF8991E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{3F91A6A9-5F97-4F6D-864C-DA066F94121A}.Release|x64.ActiveCfg = Release|x64
-		{3F91A6A9-5F97-4F6D-864C-DA066F94121A}.Release|x64.Build.0 = Release|x64
+		{73EF7915-633C-4DE3-B6F0-6A0F0FF8991E}.Release|x64.ActiveCfg = Release|x64
+		{73EF7915-633C-4DE3-B6F0-6A0F0FF8991E}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
