@@ -2,10 +2,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<Authors>Det</Authors>
-		<Company></Company>
-		<Version>1.1.0.0</Version>
+		<Version>1.1.1.0</Version>
 		<Description>Swaps between your favorite minions</Description>
-		<Copyright></Copyright>
 		<PackageProjectUrl>https://github.com/InitialDet/MinionRoulette</PackageProjectUrl>
 		<Configurations>Release</Configurations>
 		<TargetFramework>net5.0-windows</TargetFramework>
@@ -33,6 +31,10 @@
 		<DebugType>none</DebugType>
 		<DebugSymbols>false</DebugSymbols>
 	</PropertyGroup>
+
+	<ItemGroup>
+		<Folder Include="images\" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="DalamudPackager" Version="2.1.7" />
