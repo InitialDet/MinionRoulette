@@ -26,28 +26,24 @@ public sealed partial class Plugin
 
         public void TerritoryChanged(object? sender, ushort zoneID)
         {
-            if (!Service.Configuration.PluginEnabled)
+            if (!Service.Configuration.PluginEnabled) {
+                lastZoneID = zoneID;
                 return;
+            }
 
             if (zoneID != lastZoneID)
-            {
-                PluginLog.Debug("Zone Change, New Zone");
                 SwapMinion(zoneID);
-            }
-            else
-                PluginLog.Debug("Zone Change, Same Zone");
         }
 
         private async void SwapMinion(ushort zoneID)
         {
             int trys = 0;
+            
             while ((this.lastZoneID != zoneID) && !disposed)
             {
-                await Task.Delay(200); //Theres no need to loop like crazy while waiting for the game to load.
+                await Task.Delay(500); //Theres no need to loop like crazy while waiting for the game to load.
                 if ((Service.ClientState.LocalContentId == 0 && Service.ClientState.LocalPlayer == null) || BetweenAreas())
-                {
                     continue;
-                }
 
                 if (BoundByDuty()) // Dont proceed if player is Bound By Duty
                 {
@@ -56,9 +52,7 @@ public sealed partial class Plugin
                 }
 
                 if (BetweenAreas()) // Recheking because the BetweenAreas() above can be inconsistent, not sure why.
-                {
                     continue;
-                }
 
                 if (!IsMinionSummoned())
                 {
@@ -82,14 +76,28 @@ public sealed partial class Plugin
 
         public static unsafe bool CastAction(uint id, ActionType actionType = ActionType.General)
         {
-            return ActionManager.Instance()->UseAction(actionType, id);
+            try
+            {
+                return ActionManager.Instance()->UseAction(actionType, id);
+            }
+            catch (Exception ex)
+            {
+                PluginLog.LogError(ex, "CastAction");
+                return false;
+            }
         }
 
         public static unsafe bool ActionAvailable(uint id)
         {
-            // status 0 == available to cast? not sure but it seems to be
-            // Also make sure its the skill is not on cooldown (maily for mooch2)
-            return ActionManager.Instance()->GetActionStatus(ActionType.General, id) == 0 && !ActionManager.Instance()->IsRecastTimerActive(ActionType.Spell, id);
+            try
+            {
+                return ActionManager.Instance()->GetActionStatus(ActionType.General, id) == 0 && !ActionManager.Instance()->IsRecastTimerActive(ActionType.Spell, id);
+            }
+            catch (Exception ex)
+            {
+                PluginLog.LogError(ex, "CastAction");
+                return false;
+            }
         }
 
         public static bool BetweenAreas() =>
