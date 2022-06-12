@@ -13,7 +13,6 @@
     "Minion"
   ],
   "InternalName": "MinionRoulette",
-  "AssemblyVersion": "",
   "ApplicableVersion": "any",
   "DalamudApiLevel": 6,
   "LoadPriority": 0,
