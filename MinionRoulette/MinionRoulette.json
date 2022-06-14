@@ -8,10 +8,8 @@
     ""
   ],
   "RepoUrl": "https://github.com/InitialDet/MinionRoulette",
-  "CategoryTags": [
-    "Casual",
-    "Minion"
-  ],
+  "Tags": ["Casual","Minion"],
+  "CategoryTags": ["other"],
   "InternalName": "MinionRoulette",
   "ApplicableVersion": "any",
   "DalamudApiLevel": 6,
