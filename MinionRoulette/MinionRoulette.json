@@ -12,7 +12,7 @@
   "CategoryTags": ["other"],
   "InternalName": "MinionRoulette",
   "ApplicableVersion": "any",
-  "DalamudApiLevel": 6,
+  "DalamudApiLevel": 7,
   "LoadPriority": 0,
   "Changelog": "Added a toggle to enable/disable the plugin. Now Minions wont be resummoned if dismissed. New icon by Vec7rex"
 }

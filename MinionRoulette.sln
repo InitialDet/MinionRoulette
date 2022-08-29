@@ -7,9 +7,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinionRoulette", "MinionRou
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{73EF7915-633C-4DE3-B6F0-6A0F0FF8991E}.Debug|x64.ActiveCfg = Debug|x64
+		{73EF7915-633C-4DE3-B6F0-6A0F0FF8991E}.Debug|x64.Build.0 = Debug|x64
 		{73EF7915-633C-4DE3-B6F0-6A0F0FF8991E}.Release|x64.ActiveCfg = Release|x64
 		{73EF7915-633C-4DE3-B6F0-6A0F0FF8991E}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
