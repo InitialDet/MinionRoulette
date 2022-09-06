@@ -14,14 +14,11 @@ public sealed partial class Plugin
     {
         public ushort lastZoneID;
 
-        private bool disposed = false;
-
         const uint idMinionRoulette = 10;   //GeneralAction
 
         public void Init()
         {
             Service.ClientState!.TerritoryChanged += TerritoryChanged;
-            disposed = false;
         }
 
         public void TerritoryChanged(object? sender, ushort zoneID)
@@ -31,15 +28,30 @@ public sealed partial class Plugin
                 return;
             }
 
+            if (InvalidPlaces(zoneID))
+            {
+                lastZoneID = zoneID;
+                return;
+            }
+
             if (zoneID != lastZoneID)
                 SwapMinion(zoneID);
+        }
+
+        private bool InvalidPlaces(int zoneID)
+        {
+            return zoneID switch
+            {
+                1055 => true, // Island Sanctuary
+                _ => false,
+            };
         }
 
         private async void SwapMinion(ushort zoneID)
         {
             int trys = 0;
             
-            while ((this.lastZoneID != zoneID) && !disposed)
+            while ((this.lastZoneID != zoneID))
             {
                 await Task.Delay(500); //Theres no need to loop like crazy while waiting for the game to load.
                 if ((Service.ClientState.LocalContentId == 0 && Service.ClientState.LocalPlayer == null) || BetweenAreas())
@@ -82,7 +94,7 @@ public sealed partial class Plugin
             }
             catch (Exception ex)
             {
-                PluginLog.LogError(ex, "CastAction");
+                PluginLog.LogError(ex, "CastAction Failed");
                 return false;
             }
         }
@@ -95,7 +107,7 @@ public sealed partial class Plugin
             }
             catch (Exception ex)
             {
-                PluginLog.LogError(ex, "CastAction");
+                PluginLog.LogError(ex, "ActionAvailable Failed");
                 return false;
             }
         }
@@ -108,11 +120,10 @@ public sealed partial class Plugin
 
         public void Dispose()
         {
-            disposed = true;
             Service.ClientState!.TerritoryChanged -= TerritoryChanged;
         }
 
-        // Credits to Pohky (from goat place) for helping me with this
+        // Ty Pohky for helping me with this
         private static bool IsMinionSummoned()
         {
             try

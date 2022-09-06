@@ -7,7 +7,7 @@ namespace MinionRoulette;
 // Based on the FishNotify plugin
 public sealed partial class Plugin : IDalamudPlugin
 {
-    public string Name => "Minion Roulette";
+    public string Name => Service.PluginName;
 
     private const string cmdMrCfg = "/mrcfg";
     private const string cmdMrOn  = "/mron";
@@ -44,9 +44,7 @@ public sealed partial class Plugin : IDalamudPlugin
 
     private void OnCommand(string command, string args)
     {
-        PluginLog.Debug($"Command: {command}");
         if (command.Trim().Equals(cmdMrCfg)) {
-            Service.Chat.Print("MinionRoulette Cfg");
             OnOpenConfigUi();
         }
 

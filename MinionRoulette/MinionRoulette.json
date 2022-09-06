@@ -14,6 +14,6 @@
   "ApplicableVersion": "any",
   "DalamudApiLevel": 7,
   "LoadPriority": 0,
-  "Changelog": "Added a toggle to enable/disable the plugin. Now Minions wont be resummoned if dismissed. New icon by Vec7rex"
+  "Changelog": "Disabled on Island Sanctuary, since it removed minions placed there"
 }
 
