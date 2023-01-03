@@ -4,7 +4,7 @@ using Dalamud.Plugin;
 using Lumina.Excel.GeneratedSheets;
 
 namespace MinionRoulette;
-// Based on the FishNotify plugin
+
 public sealed partial class Plugin : IDalamudPlugin
 {
     public string Name => Service.PluginName;
