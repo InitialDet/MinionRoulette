@@ -4,7 +4,7 @@
   "Punchline": "Swap between your minions every time you change zones",
   "Description": "Make sure to enable the checkbox in the Minion Guide if you want only your favorite minions to be swapped",
   "IconUrl": "https://raw.githubusercontent.com/InitialDet/MinionRoulette/main/MinionRoulette/images/icon.png",
-  "ImageUrls": [
+  "ImageUrls": [ 
     ""
   ],
   "RepoUrl": "https://github.com/InitialDet/MinionRoulette",
