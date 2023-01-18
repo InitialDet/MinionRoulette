@@ -14,6 +14,6 @@
   "ApplicableVersion": "any",
   "DalamudApiLevel": 8,
   "LoadPriority": 0,
-  "Changelog": "Disabled on Island Sanctuary, since it removed minions placed there"
+  "Changelog": ""
 }
 

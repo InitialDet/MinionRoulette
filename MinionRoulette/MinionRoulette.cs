@@ -9,11 +9,11 @@ public sealed partial class Plugin : IDalamudPlugin
 {
     public string Name => Service.PluginName;
 
-    private const string cmdMrCfg = "/mrcfg";
-    private const string cmdMrOn  = "/mron";
-    private const string cmdMrOff = "/mroff";
+    private const string cmdMrCfg = "/minionroulette";
+    private const string cmdMrCfgShort = "/mrcfg";
+    private const string cmdMrToggle  = "/mrtoggle";
 
-    readonly MinionSwap currentZone;
+    private readonly SwapManager currentZone;
     private static PluginUI PluginUI = null!;
 
     public Plugin(DalamudPluginInterface pluginInterface)
@@ -24,14 +24,15 @@ public sealed partial class Plugin : IDalamudPlugin
         Service.PluginInterface!.UiBuilder.Draw += Service.WindowSystem.Draw;
         Service.PluginInterface!.UiBuilder.OpenConfigUi += OnOpenConfigUi;
 
-        Service.Commands.AddHandler(cmdMrOff, new CommandInfo(OnCommand)
+        Service.Commands.AddHandler(cmdMrToggle, new CommandInfo(OnCommand)
         {
-            HelpMessage = "Disables MinionRoulette",
+            HelpMessage = "Toggles MinionRoulette"
         });
 
-        Service.Commands.AddHandler(cmdMrOn, new CommandInfo(OnCommand)
+        Service.Commands.AddHandler(cmdMrCfgShort, new CommandInfo(OnCommand)
         {
-            HelpMessage = "Enables MinionRoulette"
+            HelpMessage = "Opens Config Window"
+
         });
 
         Service.Commands.AddHandler(cmdMrCfg, new CommandInfo(OnCommand)
@@ -44,20 +45,25 @@ public sealed partial class Plugin : IDalamudPlugin
 
     private void OnCommand(string command, string args)
     {
-        if (command.Trim().Equals(cmdMrCfg)) {
+        if (command.Trim().Equals(cmdMrCfg) || command.Trim().Equals(cmdMrCfgShort)) {
             OnOpenConfigUi();
+            return;
         }
 
-        if (command.Trim().Equals(cmdMrOn))
+        if (command.Trim().Equals(cmdMrToggle))
         {
-            Service.Chat.Print("MinionRoulette Enabled");
-            Service.Configuration.PluginEnabled = true;
-        }
+            if (Service.Configuration.PluginEnabled)
+            {
+                Service.Chat.Print("MinionRoulette Disabled");
+                Service.Configuration.PluginEnabled = false;
+            }
+            else
+            {
+                Service.Chat.Print("MinionRoulette Enabled");
+                Service.Configuration.PluginEnabled = true;
+            }
 
-        if (command.Trim().Equals(cmdMrOff))
-        {
-            Service.Chat.Print("MinionRoulette Disabled");
-            Service.Configuration.PluginEnabled = false;
+            return;
         }
     }
 
@@ -72,9 +78,7 @@ public sealed partial class Plugin : IDalamudPlugin
         Service.PluginInterface!.UiBuilder.Draw -= Service.WindowSystem.Draw;
         Service.PluginInterface.UiBuilder.OpenConfigUi -= OnOpenConfigUi;
         Service.Commands.RemoveHandler(cmdMrCfg);
-        Service.Commands.RemoveHandler(cmdMrOn);
-        Service.Commands.RemoveHandler(cmdMrOff);
+        Service.Commands.RemoveHandler(cmdMrCfgShort);
+        Service.Commands.RemoveHandler(cmdMrToggle);
     }
-
-   
 }

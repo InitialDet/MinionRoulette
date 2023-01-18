@@ -10,9 +10,9 @@ using FFXIVClientStructs.FFXIV.Client.Game;
 namespace MinionRoulette;
 public sealed partial class Plugin
 {
-    public class MinionSwap : IDisposable
+    public class SwapManager : IDisposable
     {
-        public ushort lastZoneID;
+        public ushort lastZone;
 
         const uint idMinionRoulette = 10;   //GeneralAction
 
@@ -21,24 +21,24 @@ public sealed partial class Plugin
             Service.ClientState!.TerritoryChanged += TerritoryChanged;
         }
 
-        public void TerritoryChanged(object? sender, ushort zoneID)
+        public void TerritoryChanged(object? sender, ushort currentZone)
         {
             if (!Service.Configuration.PluginEnabled) {
-                lastZoneID = zoneID;
+                lastZone = currentZone;
                 return;
             }
 
-            if (InvalidPlaces(zoneID))
+            if (InvalidPlaces(currentZone))
             {
-                lastZoneID = zoneID;
+                lastZone = currentZone;
                 return;
             }
 
-            if (zoneID != lastZoneID)
-                SwapMinion(zoneID);
+            if (currentZone != lastZone)
+                SwapMinion(currentZone);
         }
 
-        private bool InvalidPlaces(int zoneID)
+        private static bool InvalidPlaces(int zoneID)
         {
             return zoneID switch
             {
@@ -51,7 +51,7 @@ public sealed partial class Plugin
         {
             int trys = 0;
             
-            while ((this.lastZoneID != zoneID))
+            while (this.lastZone != zoneID)
             {
                 await Task.Delay(500); //Theres no need to loop like crazy while waiting for the game to load.
                 if ((Service.ClientState.LocalContentId == 0 && Service.ClientState.LocalPlayer == null) || BetweenAreas())
@@ -59,7 +59,7 @@ public sealed partial class Plugin
 
                 if (BoundByDuty()) // Dont proceed if player is Bound By Duty
                 {
-                    this.lastZoneID = zoneID;
+                    this.lastZone = zoneID;
                     return;
                 }
 
@@ -68,14 +68,14 @@ public sealed partial class Plugin
 
                 if (!IsMinionSummoned())
                 {
-                    this.lastZoneID = zoneID;
+                    this.lastZone = zoneID;
                     break;
                 }
 
                 if (ActionAvailable(idMinionRoulette))
                 {
                     if (CastAction(idMinionRoulette)) {
-                        this.lastZoneID = zoneID;
+                        this.lastZone = zoneID;
                         break;
                     }
                 }      

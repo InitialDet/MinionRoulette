@@ -17,7 +17,6 @@ public class Service
 
     [PluginService][RequiredVersion("1.0")] public static DalamudPluginInterface PluginInterface { get; set; } = null!;
     [PluginService][RequiredVersion("1.0")] public static ClientState ClientState { get; private set; } = null!;
-    //[PluginService][RequiredVersion("1.0")] public static Framework Framework { get; private set; } = null!;
     [PluginService][RequiredVersion("1.0")] public static Dalamud.Game.ClientState.Conditions.Condition Condition { get; private set; } = null!;
     [PluginService][RequiredVersion("1.0")] public static ObjectTable ObjectTable { get; private set; } = null!;
     [PluginService][RequiredVersion("1.0")] public static CommandManager Commands { get; private set; } = null!;
