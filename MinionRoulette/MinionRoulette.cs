@@ -1,84 +1,79 @@
 ﻿using Dalamud.Game.Command;
-using Dalamud.Logging;
 using Dalamud.Plugin;
-using Lumina.Excel.GeneratedSheets;
+// ReSharper disable UnusedMember.Global
+// ReSharper disable UnusedType.Global
 
 namespace MinionRoulette;
 
-public sealed partial class Plugin : IDalamudPlugin
+public class Plugin : IDalamudPlugin
 {
-    public string Name => Service.PluginName;
+    public static string Name => Service.PluginName;
 
-    private const string cmdMrCfg = "/minionroulette";
-    private const string cmdMrCfgShort = "/mrcfg";
-    private const string cmdMrToggle  = "/mrtoggle";
+    private const string CmdMrCfg = "/minionroulette";
+    private const string CmdMrCfgShort = "/mrcfg";
+    private const string CmdMrToggle  = "/mrtoggle";
 
-    private readonly SwapManager currentZone;
-    private static PluginUI PluginUI = null!;
+    private readonly SwapManager _currentZone;
+    private static PluginUi _pluginUi = null!;
 
     public Plugin(DalamudPluginInterface pluginInterface)
     {
         Service.Initialize(pluginInterface);
-        Service.Configuration = Configuration.Load();
-        PluginUI = new PluginUI();
-        Service.PluginInterface!.UiBuilder.Draw += Service.WindowSystem.Draw;
-        Service.PluginInterface!.UiBuilder.OpenConfigUi += OnOpenConfigUi;
+        Service.Configuration = Configuration.Configuration.Load();
+        _pluginUi = new PluginUi();
+        Service.PluginInterface.UiBuilder.Draw += Service.WindowSystem.Draw;
+        Service.PluginInterface.UiBuilder.OpenConfigUi += OnOpenConfigUi;
 
-        Service.Commands.AddHandler(cmdMrToggle, new CommandInfo(OnCommand)
+        Service.Commands.AddHandler(CmdMrToggle, new CommandInfo(OnCommand)
         {
             HelpMessage = "Toggles MinionRoulette"
         });
 
-        Service.Commands.AddHandler(cmdMrCfgShort, new CommandInfo(OnCommand)
+        Service.Commands.AddHandler(CmdMrCfgShort, new CommandInfo(OnCommand)
         {
             HelpMessage = "Opens Config Window"
 
         });
 
-        Service.Commands.AddHandler(cmdMrCfg, new CommandInfo(OnCommand)
+        Service.Commands.AddHandler(CmdMrCfg, new CommandInfo(OnCommand)
         {
             HelpMessage = "Opens Config Window"
         });
-        currentZone = new();
-        currentZone.Init();
+        _currentZone = new SwapManager();
+        _currentZone.Init();
     }
 
-    private void OnCommand(string command, string args)
+    private static void OnCommand(string command, string args)
     {
-        if (command.Trim().Equals(cmdMrCfg) || command.Trim().Equals(cmdMrCfgShort)) {
-            OnOpenConfigUi();
-            return;
-        }
-
-        if (command.Trim().Equals(cmdMrToggle))
+        switch (command.Trim())
         {
-            if (Service.Configuration.PluginEnabled)
-            {
+            case CmdMrCfg:
+            case CmdMrCfgShort:
+                OnOpenConfigUi();
+                return;
+            case CmdMrToggle when Service.Configuration.PluginEnabled:
                 Service.Chat.Print("MinionRoulette Disabled");
                 Service.Configuration.PluginEnabled = false;
-            }
-            else
-            {
+                break;
+            case CmdMrToggle:
                 Service.Chat.Print("MinionRoulette Enabled");
                 Service.Configuration.PluginEnabled = true;
-            }
-
-            return;
+                break;
         }
     }
 
-    private void OnOpenConfigUi() => PluginUI.Toggle();
+    private static void OnOpenConfigUi() => _pluginUi.Toggle();
 
     public void Dispose()
     {
-        PluginUI.Dispose();
-        currentZone.Dispose();
+        _pluginUi.Dispose();
+        _currentZone.Dispose();
 
         Service.Configuration.Save();
-        Service.PluginInterface!.UiBuilder.Draw -= Service.WindowSystem.Draw;
+        Service.PluginInterface.UiBuilder.Draw -= Service.WindowSystem.Draw;
         Service.PluginInterface.UiBuilder.OpenConfigUi -= OnOpenConfigUi;
-        Service.Commands.RemoveHandler(cmdMrCfg);
-        Service.Commands.RemoveHandler(cmdMrCfgShort);
-        Service.Commands.RemoveHandler(cmdMrToggle);
+        Service.Commands.RemoveHandler(CmdMrCfg);
+        Service.Commands.RemoveHandler(CmdMrCfgShort);
+        Service.Commands.RemoveHandler(CmdMrToggle);
     }
 }

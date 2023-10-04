@@ -1,4 +1,3 @@
-using Dalamud.Interface;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
 using System;
@@ -6,9 +5,9 @@ using Dalamud.Interface.Colors;
 using System.Diagnostics;
 
 namespace MinionRoulette;
-public class PluginUI : Window, IDisposable
+public class PluginUi : Window, IDisposable
 {
-    public PluginUI() : base($"{Service.PluginName} Settings")
+    public PluginUi() : base($"{Service.PluginName} Settings")
     {
         Service.WindowSystem.AddWindow(this);
 
@@ -45,9 +44,9 @@ public class PluginUI : Window, IDisposable
         Service.Configuration.Save();
     }
 
-    public static void ShowKofi()
+    private static void ShowKofi()
     {
-        string buttonText = "Support on Ko-fi";
+        const string buttonText = "Support on Ko-fi";
         ImGui.PushStyleColor(ImGuiCol.Button, 0xFF000000 | 0x005E5BFF);
         ImGui.PushStyleColor(ImGuiCol.ButtonActive, 0xDD000000 | 0x005E5BFF);
         ImGui.PushStyleColor(ImGuiCol.ButtonHovered, 0xAA000000 | 0x005E5BFF);
