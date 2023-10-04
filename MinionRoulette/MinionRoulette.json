@@ -12,7 +12,6 @@
   "CategoryTags": ["other"],
   "InternalName": "MinionRoulette",
   "ApplicableVersion": "any",
-  "DalamudApiLevel": 8,
   "LoadPriority": 0,
   "Changelog": ""
 }

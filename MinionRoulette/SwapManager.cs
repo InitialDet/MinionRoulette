@@ -1,10 +1,12 @@
 using System;
+using System.Linq;
 using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Logging;
 using System.Threading.Tasks;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Game.ClientState.Objects;
 using Dalamud.Game.ClientState.Objects.Enums;
+using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.Game;
 
 namespace MinionRoulette;
@@ -21,8 +23,9 @@ public sealed partial class Plugin
             Service.ClientState!.TerritoryChanged += TerritoryChanged;
         }
 
-        public void TerritoryChanged(object? sender, ushort currentZone)
+        public void TerritoryChanged(ushort currentZone)
         {
+
             if (!Service.Configuration.PluginEnabled) {
                 lastZone = currentZone;
                 return;
@@ -49,6 +52,7 @@ public sealed partial class Plugin
 
         private async void SwapMinion(ushort zoneID)
         {
+            
             int trys = 0;
             
             while (this.lastZone != zoneID)
@@ -86,15 +90,14 @@ public sealed partial class Plugin
             }
         }
 
-        public static unsafe bool CastAction(uint id, ActionType actionType = ActionType.General)
+        public static unsafe bool CastAction(uint id, ActionType actionType = ActionType.GeneralAction)
         {
             try
             {
                 return ActionManager.Instance()->UseAction(actionType, id);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                PluginLog.LogError(ex, "CastAction Failed");
                 return false;
             }
         }
@@ -103,11 +106,10 @@ public sealed partial class Plugin
         {
             try
             {
-                return ActionManager.Instance()->GetActionStatus(ActionType.General, id) == 0 && !ActionManager.Instance()->IsRecastTimerActive(ActionType.Spell, id);
+                return ActionManager.Instance()->GetActionStatus(ActionType.GeneralAction, id) == 0 && !ActionManager.Instance()->IsRecastTimerActive(ActionType.Action, id);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                PluginLog.LogError(ex, "ActionAvailable Failed");
                 return false;
             }
         }
@@ -128,31 +130,23 @@ public sealed partial class Plugin
         {
             try
             {
-                bool isSummoned = false;
+                var isSummoned = false;
 
-                ObjectTable list = Service.ObjectTable;
-                GameObject? player = null;
+                var list = Service.ObjectTable;
+                
+                GameObject? player = Service.ObjectTable.OfType<Character>().FirstOrDefault();
 
-                foreach (var obj in Service.ObjectTable)
+                if (player == null || list == null)
+                    return isSummoned;
+                
+                for (var i = 0; i < list.Length - 1; i++)
                 {
-                    if (obj is Character)
-                    {
-                        player = obj;
-                        break;
-                    }
-                }
+                    if (list[i]?.Address != player?.Address)
+                        continue;
 
-                if (player != null && list != null)
-                {
-                    for (var i = 0; i < list.Length - 1; i++)
-                    {
-                        if (list[i]?.Address != player?.Address)
-                            continue;
-
-                        var obj = list[i + 1]; // If the player adress is found, the next obj should be the minion
-                        isSummoned = (obj != null && obj.ObjectKind == ObjectKind.Companion);
-                        break;
-                    }
+                    var obj = list[i + 1]; // If the player adress is found, the next obj should be the minion
+                    isSummoned = (obj != null && obj.ObjectKind == ObjectKind.Companion);
+                    break;
                 }
 
                 return isSummoned;
