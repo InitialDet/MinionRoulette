@@ -1,10 +1,11 @@
+using System;
+using System.Diagnostics;
+using Dalamud.Interface.Colors;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
-using System;
-using Dalamud.Interface.Colors;
-using System.Diagnostics;
 
 namespace MinionRoulette;
+
 public class PluginUi : Window, IDisposable
 {
     public PluginUi() : base($"{Service.PluginName} Settings")
@@ -27,8 +28,9 @@ public class PluginUi : Window, IDisposable
             return;
 
         ShowKofi();
-        ImGui.Checkbox("Enable MinionRoulette", ref Service.Configuration.PluginEnabled);
-
+        if (ImGui.Checkbox("Enable MinionRoulette", ref Service.Configuration.PluginEnabled))
+            Service.Configuration.Save();
+        
         if (Service.Configuration.PluginEnabled)
             ImGui.TextColored(ImGuiColors.HealerGreen, "MinionRoulette Enabled");
         else
@@ -52,11 +54,8 @@ public class PluginUi : Window, IDisposable
         ImGui.PushStyleColor(ImGuiCol.ButtonHovered, 0xAA000000 | 0x005E5BFF);
 
         if (ImGui.Button(buttonText))
-        {
             Process.Start(new ProcessStartInfo { FileName = "https://ko-fi.com/initialdet", UseShellExecute = true });
-        }
 
         ImGui.PopStyleColor(3);
     }
 }
-

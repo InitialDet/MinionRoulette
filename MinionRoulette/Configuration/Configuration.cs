@@ -6,9 +6,8 @@ namespace MinionRoulette.Configuration;
 [Serializable]
 public class Configuration : IPluginConfiguration
 {
-    public int Version { get; set; } = 1;
-
     public bool PluginEnabled = true;
+    public int Version { get; set; } = 1;
 
     public void Save()
     {
@@ -18,13 +17,10 @@ public class Configuration : IPluginConfiguration
     public static Configuration Load()
     {
         if (Service.PluginInterface.GetPluginConfig() is Configuration config)
-        {
             return config;
-        }
 
         config = new Configuration();
         config.Save();
         return config;
     }
 }
-

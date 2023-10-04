@@ -1,18 +1,22 @@
 using System;
 using System.Linq;
-using Dalamud.Game.ClientState.Conditions;
 using System.Threading.Tasks;
-using Dalamud.Game.ClientState.Objects.Types;
+using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.ClientState.Objects.Enums;
+using Dalamud.Game.ClientState.Objects.Types;
 using FFXIVClientStructs.FFXIV.Client.Game;
 
 namespace MinionRoulette;
 
 public class SwapManager : IDisposable
 {
+    private const uint IdMinionRoulette = 10; //GeneralAction
     private ushort _lastZone;
 
-    private const uint IdMinionRoulette = 10; //GeneralAction
+    public void Dispose()
+    {
+        Service.ClientState.TerritoryChanged -= TerritoryChanged;
+    }
 
     public void Init()
     {
@@ -72,13 +76,11 @@ public class SwapManager : IDisposable
             }
 
             if (ActionAvailable(IdMinionRoulette))
-            {
                 if (CastAction(IdMinionRoulette))
                 {
                     _lastZone = zoneId;
                     break;
                 }
-            }
 
             trys++;
             if (trys > 10)
@@ -111,15 +113,14 @@ public class SwapManager : IDisposable
         }
     }
 
-    private static bool BetweenAreas() =>
-        Service.Condition[ConditionFlag.BetweenAreas] || Service.Condition[ConditionFlag.BetweenAreas51];
-
-    private static bool BoundByDuty() =>
-        Service.Condition[ConditionFlag.BoundByDuty];
-
-    public void Dispose()
+    private static bool BetweenAreas()
     {
-        Service.ClientState.TerritoryChanged -= TerritoryChanged;
+        return Service.Condition[ConditionFlag.BetweenAreas] || Service.Condition[ConditionFlag.BetweenAreas51];
+    }
+
+    private static bool BoundByDuty()
+    {
+        return Service.Condition[ConditionFlag.BoundByDuty];
     }
 
     // Ty Pohky for helping me with this

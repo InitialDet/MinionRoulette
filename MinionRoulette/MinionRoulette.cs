@@ -1,5 +1,6 @@
 ﻿using Dalamud.Game.Command;
 using Dalamud.Plugin;
+
 // ReSharper disable UnusedMember.Global
 // ReSharper disable UnusedType.Global
 
@@ -7,14 +8,12 @@ namespace MinionRoulette;
 
 public class Plugin : IDalamudPlugin
 {
-    public static string Name => Service.PluginName;
-
     private const string CmdMrCfg = "/minionroulette";
     private const string CmdMrCfgShort = "/mrcfg";
-    private const string CmdMrToggle  = "/mrtoggle";
+    private const string CmdMrToggle = "/mrtoggle";
+    private static PluginUi _pluginUi = null!;
 
     private readonly SwapManager _currentZone;
-    private static PluginUi _pluginUi = null!;
 
     public Plugin(DalamudPluginInterface pluginInterface)
     {
@@ -32,7 +31,6 @@ public class Plugin : IDalamudPlugin
         Service.Commands.AddHandler(CmdMrCfgShort, new CommandInfo(OnCommand)
         {
             HelpMessage = "Opens Config Window"
-
         });
 
         Service.Commands.AddHandler(CmdMrCfg, new CommandInfo(OnCommand)
@@ -41,6 +39,21 @@ public class Plugin : IDalamudPlugin
         });
         _currentZone = new SwapManager();
         _currentZone.Init();
+    }
+
+    public static string Name => Service.PluginName;
+
+    public void Dispose()
+    {
+        _pluginUi.Dispose();
+        _currentZone.Dispose();
+
+        Service.Configuration.Save();
+        Service.PluginInterface.UiBuilder.Draw -= Service.WindowSystem.Draw;
+        Service.PluginInterface.UiBuilder.OpenConfigUi -= OnOpenConfigUi;
+        Service.Commands.RemoveHandler(CmdMrCfg);
+        Service.Commands.RemoveHandler(CmdMrCfgShort);
+        Service.Commands.RemoveHandler(CmdMrToggle);
     }
 
     private static void OnCommand(string command, string args)
@@ -62,18 +75,8 @@ public class Plugin : IDalamudPlugin
         }
     }
 
-    private static void OnOpenConfigUi() => _pluginUi.Toggle();
-
-    public void Dispose()
+    private static void OnOpenConfigUi()
     {
-        _pluginUi.Dispose();
-        _currentZone.Dispose();
-
-        Service.Configuration.Save();
-        Service.PluginInterface.UiBuilder.Draw -= Service.WindowSystem.Draw;
-        Service.PluginInterface.UiBuilder.OpenConfigUi -= OnOpenConfigUi;
-        Service.Commands.RemoveHandler(CmdMrCfg);
-        Service.Commands.RemoveHandler(CmdMrCfgShort);
-        Service.Commands.RemoveHandler(CmdMrToggle);
+        _pluginUi.Toggle();
     }
 }

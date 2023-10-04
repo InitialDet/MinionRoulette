@@ -1,14 +1,12 @@
-﻿using Dalamud.IoC;
+﻿using Dalamud.Interface.Windowing;
+using Dalamud.IoC;
 using Dalamud.Plugin;
-using Dalamud.Interface.Windowing;
 using Dalamud.Plugin.Services;
 
 namespace MinionRoulette;
+
 public class Service
 {
-    public static void Initialize(DalamudPluginInterface pluginInterface)
-        => pluginInterface.Create<Service>();
-
     public const string PluginName = "MinionRoulette";
 
     [PluginService] public static DalamudPluginInterface PluginInterface { get; private set; } = null!;
@@ -20,5 +18,9 @@ public class Service
 
     public static Configuration.Configuration Configuration { get; set; } = null!;
     public static WindowSystem WindowSystem { get; } = new(PluginName);
-}
 
+    public static void Initialize(DalamudPluginInterface pluginInterface)
+    {
+        pluginInterface.Create<Service>();
+    }
+}
