@@ -1,9 +1,6 @@
 ﻿using Dalamud.Game.Command;
 using Dalamud.Plugin;
 
-// ReSharper disable UnusedMember.Global
-// ReSharper disable UnusedType.Global
-
 namespace MinionRoulette;
 
 public class Plugin : IDalamudPlugin
