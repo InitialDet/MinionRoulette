@@ -19,6 +19,8 @@ public class Plugin : IDalamudPlugin
         _pluginUi = new PluginUi();
         Service.PluginInterface.UiBuilder.Draw += Service.WindowSystem.Draw;
         Service.PluginInterface.UiBuilder.OpenConfigUi += OnOpenConfigUi;
+        Service.PluginInterface.UiBuilder.OpenMainUi += OnOpenConfigUi; 
+
 
         Service.Commands.AddHandler(CmdMrToggle, new CommandInfo(OnCommand)
         {
@@ -48,6 +50,7 @@ public class Plugin : IDalamudPlugin
         Service.Configuration.Save();
         Service.PluginInterface.UiBuilder.Draw -= Service.WindowSystem.Draw;
         Service.PluginInterface.UiBuilder.OpenConfigUi -= OnOpenConfigUi;
+        Service.PluginInterface.UiBuilder.OpenMainUi -= OnOpenConfigUi;
         Service.Commands.RemoveHandler(CmdMrCfg);
         Service.Commands.RemoveHandler(CmdMrCfgShort);
         Service.Commands.RemoveHandler(CmdMrToggle);

@@ -11,7 +11,6 @@ public class PluginUi : Window, IDisposable
     public PluginUi() : base($"{Service.PluginName} Settings")
     {
         Service.WindowSystem.AddWindow(this);
-
         Flags |= ImGuiWindowFlags.NoScrollbar;
         Flags |= ImGuiWindowFlags.NoScrollWithMouse;
     }
@@ -37,8 +36,6 @@ public class PluginUi : Window, IDisposable
             ImGui.TextColored(ImGuiColors.DalamudRed, "MinionRoulette Disabled");
 
         ImGui.Spacing();
-
-        ImGui.End();
     }
 
     public override void OnClose()
