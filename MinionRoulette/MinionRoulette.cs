@@ -12,7 +12,7 @@ public class Plugin : IDalamudPlugin
 
     private readonly SwapManager _currentZone;
 
-    public Plugin(DalamudPluginInterface pluginInterface)
+    public Plugin(IDalamudPluginInterface pluginInterface)
     {
         Service.Initialize(pluginInterface);
         Service.Configuration = Configuration.Configuration.Load();

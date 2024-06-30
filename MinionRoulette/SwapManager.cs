@@ -131,10 +131,10 @@ public class SwapManager : IDisposable
         {
             var isSummoned = false;
 
-            GameObject? player = Service.ObjectTable.OfType<Character>().FirstOrDefault();
+            IGameObject? player = Service.ObjectTable.OfType<ICharacter>().FirstOrDefault();
 
             if (player == null)
-                return isSummoned;
+                return false;
 
             for (var i = 0; i < list.Length - 1; i++)
             {
