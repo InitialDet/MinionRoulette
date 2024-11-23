@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <Authors>Det</Authors>
-        <Version>1.1.4.1</Version>
+        <Version>1.1.4.2</Version>
         <Description>Swaps between your favorite minions</Description>
         <PackageProjectUrl>https://github.com/InitialDet/MinionRoulette</PackageProjectUrl>
         <Configurations>Release;Debug</Configurations>
@@ -43,7 +43,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="DalamudPackager" Version="2.1.13"/>
+        <PackageReference Include="DalamudPackager" Version="11.0.0" />
         <Reference Include="FFXIVClientStructs">
             <HintPath>$(DalamudLibPath)FFXIVClientStructs.dll</HintPath>
             <Private>false</Private>
