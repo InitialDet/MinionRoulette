@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using Dalamud.Interface.Colors;
+using Dalamud.Interface.Components;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
 
@@ -34,8 +35,13 @@ public class PluginUi : Window, IDisposable
             ImGui.TextColored(ImGuiColors.HealerGreen, "MinionRoulette Enabled");
         else
             ImGui.TextColored(ImGuiColors.DalamudRed, "MinionRoulette Disabled");
-
         ImGui.Spacing();
+        
+        if (ImGui.Checkbox("Don't swap if the Minion is Dismissed", ref Service.Configuration.DontSwapDismissed))
+            Service.Configuration.Save();
+
+        ImGuiComponents.HelpMarker("If this is enabled, Minion Roulette won't summon the minion if it is dismissed.");
+
     }
 
     public override void OnClose()

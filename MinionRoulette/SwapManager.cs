@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.Types;
+using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.Game;
 
 namespace MinionRoulette;
@@ -13,9 +14,14 @@ public class SwapManager : IDisposable
     private const uint IdMinionRoulette = 10; //GeneralAction
     private ushort _lastZone;
 
+    private const int TickCooldown = 60;
+    private int _frameTick = 0;
+    private int _lastTick = 0;
+
     public void Dispose()
     {
         Service.ClientState.TerritoryChanged -= TerritoryChanged;
+        Service.Framework.Update -= OnFrameworkUpdate;
     }
 
     public void Init()
@@ -25,6 +31,7 @@ public class SwapManager : IDisposable
 
     private void TerritoryChanged(ushort currentZone)
     {
+        Service.Framework.Update -= OnFrameworkUpdate;
         if (!Service.Configuration.PluginEnabled)
         {
             _lastZone = currentZone;
@@ -37,11 +44,13 @@ public class SwapManager : IDisposable
             return;
         }
 
-        if (currentZone != _lastZone)
-            SwapMinion(currentZone);
+        if (currentZone != _lastZone && _frameTick == 0)
+        {
+            Service.Framework.Update += OnFrameworkUpdate;
+        }
     }
 
-    private static bool InvalidPlaces(int zoneId)
+    private bool InvalidPlaces(int zoneId)
     {
         return zoneId switch
         {
@@ -50,45 +59,56 @@ public class SwapManager : IDisposable
         };
     }
 
-    private async void SwapMinion(ushort zoneId)
+    private void OnFrameworkUpdate(IFramework _)
     {
-        var trys = 0;
+        _frameTick++;
 
-        while (_lastZone != zoneId)
+        if (_frameTick < _lastTick + TickCooldown)
+            return;
+
+        if (_frameTick > 2000)
+            SwapComplete();
+
+        _lastTick = _frameTick;
+
+        if (Service.ClientState.LocalContentId == 0 && Service.ClientState.LocalPlayer == null)
+            return;
+
+        if (BoundByDuty())
+            return;
+
+        if (BetweenAreas())
+            return;
+
+        if (!IsMinionSummoned())
         {
-            await Task.Delay(500); //Theres no need to loop like crazy while waiting for the game to load.
-            if ((Service.ClientState.LocalContentId == 0 && Service.ClientState.LocalPlayer == null) || BetweenAreas())
-                continue;
-
-            if (BoundByDuty()) // Dont proceed if player is Bound By Duty
+            if (Service.Configuration.DontSwapDismissed)
             {
-                _lastZone = zoneId;
+                Service.PluginLog.Debug("Dismissed Minion, not swapping");
+                SwapComplete();
                 return;
             }
-
-            if (BetweenAreas()) // Rechecking because the BetweenAreas() above can be inconsistent, not sure why.
-                continue;
-
-            if (!IsMinionSummoned())
-            {
-                _lastZone = zoneId;
-                break;
-            }
-
-            if (ActionAvailable(IdMinionRoulette))
-                if (CastAction(IdMinionRoulette))
-                {
-                    _lastZone = zoneId;
-                    break;
-                }
-
-            trys++;
-            if (trys > 10)
-                break;
         }
+
+        if (!ActionAvailable(IdMinionRoulette))
+            return;
+
+        if (!CastAction(IdMinionRoulette))
+            return;
+
+        SwapComplete();
     }
 
-    private static unsafe bool CastAction(uint id, ActionType actionType = ActionType.GeneralAction)
+    private void SwapComplete()
+    {
+        _lastZone = Service.ClientState.TerritoryType;
+        Service.Framework.Update -= OnFrameworkUpdate;
+        Service.PluginLog.Debug($"Minion Swapped: Ticks = {_frameTick}");
+        _frameTick = 0;
+        _lastTick = 0;
+    }
+
+    private unsafe bool CastAction(uint id, ActionType actionType = ActionType.GeneralAction)
     {
         try
         {
@@ -100,7 +120,7 @@ public class SwapManager : IDisposable
         }
     }
 
-    private static unsafe bool ActionAvailable(uint id)
+    private unsafe bool ActionAvailable(uint id)
     {
         try
         {
@@ -113,43 +133,25 @@ public class SwapManager : IDisposable
         }
     }
 
-    private static bool BetweenAreas()
+    private bool BetweenAreas()
     {
         return Service.Condition[ConditionFlag.BetweenAreas] || Service.Condition[ConditionFlag.BetweenAreas51];
     }
 
-    private static bool BoundByDuty()
+    private bool BoundByDuty()
     {
         return Service.Condition[ConditionFlag.BoundByDuty];
     }
 
-    // Ty Pohky for helping me with this
-    private static bool IsMinionSummoned()
+    private bool IsMinionSummoned()
     {
-        var list = Service.ObjectTable;
         try
         {
-            var isSummoned = false;
-
-            IGameObject? player = Service.ObjectTable.OfType<ICharacter>().FirstOrDefault();
-
-            if (player == null)
-                return false;
-
-            for (var i = 0; i < list.Length - 1; i++)
-            {
-                if (list[i]?.Address != player?.Address)
-                    continue;
-
-                var obj = list[i + 1]; // If the player address is found, the next obj should be the minion
-                isSummoned = obj != null && obj.ObjectKind == ObjectKind.Companion;
-                break;
-            }
-
-            return isSummoned;
+            return Service.ClientState.LocalPlayer?.CurrentMinion?.RowId != 0;
         }
-        catch (Exception)
+        catch (Exception e)
         {
+            Service.PluginLog.Error($"{e.StackTrace}");
             return false;
         }
     }

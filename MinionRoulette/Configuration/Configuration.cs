@@ -7,6 +7,8 @@ namespace MinionRoulette.Configuration;
 public class Configuration : IPluginConfiguration
 {
     public bool PluginEnabled = true;
+    public bool DontSwapDismissed = false;
+
     public int Version { get; set; } = 1;
 
     public void Save()
