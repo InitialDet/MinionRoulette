@@ -35,5 +35,6 @@
 
     <ItemGroup>
         <Folder Include="images\"/>
+        <PackageReference Update="DalamudPackager" Version="14.0.1" />
     </ItemGroup>
 </Project>
