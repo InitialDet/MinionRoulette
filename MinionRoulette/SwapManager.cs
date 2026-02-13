@@ -13,6 +13,7 @@ public class SwapManager : IDisposable
 {
     private const uint IdMinionRoulette = 10; //GeneralAction
     private ushort _lastZone;
+    private bool _isUpdateSubscribed;
 
     private const int TickCooldown = 60;
     private int _frameTick = 0;
@@ -20,18 +21,20 @@ public class SwapManager : IDisposable
 
     public void Dispose()
     {
+        StopSwapCycle();
         Service.ClientState.TerritoryChanged -= TerritoryChanged;
-        Service.Framework.Update -= OnFrameworkUpdate;
     }
 
     public void Init()
     {
+        _lastZone = Service.ClientState.TerritoryType;
         Service.ClientState.TerritoryChanged += TerritoryChanged;
     }
 
     private void TerritoryChanged(ushort currentZone)
     {
-        Service.Framework.Update -= OnFrameworkUpdate;
+        StopSwapCycle();
+
         if (!Service.Configuration.PluginEnabled)
         {
             _lastZone = currentZone;
@@ -44,10 +47,39 @@ public class SwapManager : IDisposable
             return;
         }
 
-        if (currentZone != _lastZone && _frameTick == 0)
+        if (currentZone != _lastZone)
         {
-            Service.Framework.Update += OnFrameworkUpdate;
+            StartSwapCycle();
         }
+    }
+
+    private void StartSwapCycle()
+    {
+        if (_isUpdateSubscribed)
+            return;
+
+        ResetTickState();
+        Service.Framework.Update += OnFrameworkUpdate;
+        _isUpdateSubscribed = true;
+    }
+
+    private void StopSwapCycle()
+    {
+        if (!_isUpdateSubscribed)
+        {
+            ResetTickState();
+            return;
+        }
+
+        Service.Framework.Update -= OnFrameworkUpdate;
+        _isUpdateSubscribed = false;
+        ResetTickState();
+    }
+
+    private void ResetTickState()
+    {
+        _frameTick = 0;
+        _lastTick = 0;
     }
 
     private bool InvalidPlaces(int zoneId)
@@ -102,10 +134,8 @@ public class SwapManager : IDisposable
     private void SwapComplete()
     {
         _lastZone = Service.ClientState.TerritoryType;
-        Service.Framework.Update -= OnFrameworkUpdate;
         Service.PluginLog.Debug($"Minion Swapped: Ticks = {_frameTick}");
-        _frameTick = 0;
-        _lastTick = 0;
+        StopSwapCycle();
     }
 
     private unsafe bool CastAction(uint id, ActionType actionType = ActionType.GeneralAction)

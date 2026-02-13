@@ -67,10 +67,12 @@ public class Plugin : IDalamudPlugin
             case CmdMrToggle when Service.Configuration.PluginEnabled:
                 Service.Chat.Print("MinionRoulette Disabled");
                 Service.Configuration.PluginEnabled = false;
+                Service.Configuration.Save();
                 break;
             case CmdMrToggle:
                 Service.Chat.Print("MinionRoulette Enabled");
                 Service.Configuration.PluginEnabled = true;
+                Service.Configuration.Save();
                 break;
         }
     }
