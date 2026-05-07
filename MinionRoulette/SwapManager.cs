@@ -12,7 +12,7 @@ namespace MinionRoulette;
 public class SwapManager : IDisposable
 {
     private const uint IdMinionRoulette = 10; //GeneralAction
-    private ushort _lastZone;
+    private uint _lastZone;
     private bool _isUpdateSubscribed;
 
     private const int TickCooldown = 60;
@@ -31,7 +31,7 @@ public class SwapManager : IDisposable
         Service.ClientState.TerritoryChanged += TerritoryChanged;
     }
 
-    private void TerritoryChanged(ushort currentZone)
+    private void TerritoryChanged(uint currentZone)
     {
         StopSwapCycle();
 
@@ -82,7 +82,7 @@ public class SwapManager : IDisposable
         _lastTick = 0;
     }
 
-    private bool InvalidPlaces(int zoneId)
+    private bool InvalidPlaces(uint zoneId)
     {
         return zoneId switch
         {
@@ -103,7 +103,7 @@ public class SwapManager : IDisposable
 
         _lastTick = _frameTick;
 
-        if (Service.ClientState.LocalContentId == 0 && Service.ClientState.LocalPlayer == null)
+        if (Service.PlayerState.ContentId  == 0 && Service.ObjectTable.LocalPlayer == null)
             return;
 
         if (BoundByDuty())
@@ -177,7 +177,7 @@ public class SwapManager : IDisposable
     {
         try
         {
-            return Service.ClientState.LocalPlayer?.CurrentMinion?.RowId != 0;
+            return Service.ObjectTable.LocalPlayer?.CurrentMinion?.RowId != 0;
         }
         catch (Exception e)
         {
